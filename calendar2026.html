@@ -60,7 +60,7 @@
     z-index: 10;
   }
   td {
-    padding: 3px 5px 3px 5px;
+    padding: 3px 18px 3px 5px;
     font-size: 0.78em;
     border-right: 1px solid #e8e8e8;
     vertical-align: middle;
@@ -128,7 +128,6 @@
   .bar.bar-end { border-radius: 0 0 3px 3px; }
   .bar.bar-start.bar-end { border-radius: 3px; }
   /* Pad cells that have bars so text doesn't overlap */
-  td.has-bars { padding-right: 18px; }
   /* Legend swatches */
   .legend-bar {
     display: inline-block;
@@ -309,7 +308,6 @@ function buildHalf(tableId, startMonth, endMonth) {
       let cls = [];
       if (isWeekend) cls.push("weekend");
       if (isFerie) cls.push("ferie");
-      if (vacA || vacB || vacC) cls.push("has-bars");
 
       const saint = SAINTS[month][d - 1];
       let weekBadge = "";
@@ -318,29 +316,33 @@ function buildHalf(tableId, startMonth, endMonth) {
         weekBadge = ` <span class="week-num">S${pad(wn)}</span>`;
       }
 
-      let zoneBars = "";
-      if (vacA || vacB || vacC) {
-        zoneBars = '<span class="zone-bars">';
-        if (vacA) {
-          let bc = "bar bar-a";
-          if (!vacA_prev) bc += " bar-start";
-          if (!vacA_next) bc += " bar-end";
-          zoneBars += `<span class="${bc}"></span>`;
-        }
-        if (vacB) {
-          let bc = "bar bar-b";
-          if (!vacB_prev) bc += " bar-start";
-          if (!vacB_next) bc += " bar-end";
-          zoneBars += `<span class="${bc}"></span>`;
-        }
-        if (vacC) {
-          let bc = "bar bar-c";
-          if (!vacC_prev) bc += " bar-start";
-          if (!vacC_next) bc += " bar-end";
-          zoneBars += `<span class="${bc}"></span>`;
-        }
-        zoneBars += '</span>';
+      // Always render 3 fixed slots so bar positions never shift
+      let barA = '', barB = '', barC = '';
+      if (vacA) {
+        let bc = "bar bar-a";
+        if (!vacA_prev) bc += " bar-start";
+        if (!vacA_next) bc += " bar-end";
+        barA = `<span class="${bc}"></span>`;
+      } else {
+        barA = '<span class="bar"></span>';
       }
+      if (vacB) {
+        let bc = "bar bar-b";
+        if (!vacB_prev) bc += " bar-start";
+        if (!vacB_next) bc += " bar-end";
+        barB = `<span class="${bc}"></span>`;
+      } else {
+        barB = '<span class="bar"></span>';
+      }
+      if (vacC) {
+        let bc = "bar bar-c";
+        if (!vacC_prev) bc += " bar-start";
+        if (!vacC_next) bc += " bar-end";
+        barC = `<span class="${bc}"></span>`;
+      } else {
+        barC = '<span class="bar"></span>';
+      }
+      const zoneBars = `<span class="zone-bars">${barA}${barB}${barC}</span>`;
 
       row += `<td class="${cls.join(" ")}">` +
         `${zoneBars}` +
